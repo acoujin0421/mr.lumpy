@@ -1,140 +1,182 @@
+
 <!DOCTYPE html>
 <!--
 Created using JS Bin
 http://jsbin.com
 
-Copyright (c) 2023 by anonymous (http://jsbin.com/hocewozusa/1/edit)
+Copyright (c) 2023 by anonymous (http://jsbin.com/pebatesexa/1/edit)
 
 Released under the MIT license: http://jsbin.mit-license.org
 -->
 <meta name="robots" content="noindex">
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>새학년 학급편성 프로그램</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Group Management</title>
     <style>
-        /* 여기에 CSS 스타일을 추가 */
-        .classTable, .classTable th, .classTable td {
-            border: 1px solid black;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+        }
+      .text-box {
+    border: 1px solid #000; /* 검은색 테두리 */
+    padding: 20px; /* 내부 여백 */
+    margin: 20px 0; /* 위아래 여백 */
+    width: 80%; /* 상자의 너비 */
+    background-color: #f0f0f0; /* 배경 색상 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+
+        h2 {
+            color: #5d5d5d;
+            text-align: center;
+        }
+        table, th, td {
+            border: 1px solid #a1d6e2;
             border-collapse: collapse;
+            padding: 10px;
+            text-align: center;
         }
-        .classTable th, .classTable td {
-            padding: 5px;
-            text-align: left;
+        th {
+            background-color: #b8a9c9;
+            color: white;
         }
-        .dropHover {
-            background-color: #d3d3d3;
+        tr:nth-child(even) {
+            background-color: #e6f9ff;
+        }
+        .group-tables {
+            margin: 20px auto;
+            width: 90%;
+        }
+        button {
+            background-color: #f5a9bc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #f48fb1;
         }
     </style>
 </head>
 <body>
-    <h1>새학년 학급편성 프로그램</h1>
-    <div>
-        <label for="numClasses">학급 수 설정: </label>
-        <input type="number" id="numClasses" min="1">
+    <h2>학생 임의 조정</h2>
+    <div class="text-box">
+      1. 재배치된 학생 명렬을 불러오세요. </br>
+      2. 학생의 학급을 임의조정할 수 있습니다. </br>
+      3. 맨 하단 "Save Changes" 버튼을 클릭하면 수정된 명단을 내려받을 수 있습니다.
     </div>
-    <div>
-        <label for="csvFile">CSV 파일 업로드: </label>
-        <input type="file" id="csvFile" accept=".csv">
-    </div>
-    <div id="classResults">
-        <!-- 여기에 학급별 결과를 표시 -->
-    </div>
-    <div id="manual">
-        <!-- 여기에 사용자 메뉴얼 내용을 표시 -->
-    </div>
+  </br>
+    <input type="file" id="csvFileInput" accept=".csv" onchange="loadCSVFile(event)"><br><br>
+    <div id="groupTables"></div>
+    <button onclick="saveCSV()">Save Changes</button>
 
     <script>
-        $(document).ready(function() {
-            $('#csvFile').on('change', function(event) {
-                var file = event.target.files[0];
-                var reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    var text = e.target.result;
-                    var data = parseCSV(text);
-                    var numClasses = parseInt($('#numClasses').val());
-                    var distributedClasses = distributeStudents(data, numClasses);
-                    displayClasses(distributedClasses);
-                };
+        let students = [];
+        let groups = {};
 
+        function loadCSVFile(event) {
+            const input = event.target;
+            if ('files' in input && input.files.length > 0) {
+                readFileContent(input.files[0]).then(content => {
+                    students = parseCSV(content);
+                    renderGroups();
+                }).catch(error => console.log(error));
+            }
+        }
+
+        function readFileContent(file) {
+            const reader = new FileReader();
+            return new Promise((resolve, reject) => {
+                reader.onload = event => resolve(event.target.result);
+                reader.onerror = error => reject(error);
                 reader.readAsText(file);
             });
+        }
 
-            function parseCSV(text) {
-                var lines = text.split('\n');
-                var result = [];
-                var headers = lines[0].split(',');
-
-                for(var i=1; i<lines.length; i++){
-                    var obj = {};
-                    var currentline = lines[i].split(',');
-
-                    for(var j=0; j<headers.length; j++){
-                        obj[headers[j]] = currentline[j];
-                    }
-
-                    result.push(obj);
-                }
-                
-                return result;
-            }
-
-            function distributeStudents(data, numClasses) {
-                var classes = Array.from({ length: numClasses }, () => []);
-
-                data.forEach((student, index) => {
-                    var classIndex = index % numClasses;
-                    classes[classIndex].push(student);
+        function parseCSV(text) {
+            const lines = text.split("\n");
+            const headers = lines[0].split(",");
+            return lines.slice(1).map(line => {
+                const data = line.split(",");
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header.trim()] = data[index].trim();
                 });
+                return obj;
+            });
+        }
 
-                return classes;
-            }
+function renderGroups() {
+    groups = students.reduce((acc, student) => {
+        acc[student.Group] = acc[student.Group] || [];
+        acc[student.Group].push(student);
+        return acc;
+    }, {});
 
-            function displayClasses(classes) {
-                $('#classResults').empty();
+    const groupTables = document.getElementById('groupTables');
+    groupTables.innerHTML = '';
 
-                classes.forEach(function(cls, index) {
-                    var table = $('<table></table>').addClass('classTable');
-                    var thead = $('<thead></thead>');
-                    var tbody = $('<tbody></tbody>');
-
-                    thead.append('<tr><th>학년</th><th>반</th><th>번호</th><th>성별</th><th>이름</th><th>학급내성별석차</th><th>지도곤란도</th><th>비고</th></tr>');
-                    cls.forEach(function(student) {
-                        var row = $('<tr></tr>').addClass('student');
-                        Object.values(student).forEach(function(val) {
-                            row.append('<td>' + val + '</td>');
-                        });
-                        tbody.append(row);
-                    });
-
-                    table.append(thead);
-                    table.append(tbody);
-                    $('#classResults').append('<h3>학급 ' + (index + 1) + '</h3>');
-                    $('#classResults').append(table);
-                });
-
-                enableDragAndDrop();
-            }
-
-            function enableDragAndDrop() {
-                $(".student").draggable({
-                    helper: 'clone',
-                    zIndex: 100
-                });
-
-                $(".classTable tbody").droppable({
-                    hoverClass: 'dropHover',
-                    drop: function(event, ui) {
-                        var student = ui.draggable;
-                        var newClass = $(this);
-                        newClass.append(student);
-                    }
-                });
-            }
+    Object.keys(groups).forEach(group => {
+        const table = document.createElement('table');
+        table.classList.add('group-tables');
+        table.innerHTML = '<tr><th>ID</th><th>반</th><th>번호</th><th>성별</th><th>이름</th><th>학업성취도(남)</th><th>학업성취도(여)</th><th>지도곤란도</th><th>Group</th><th>Change Group</th></tr>';
+        groups[group].forEach(student => {
+            const row = table.insertRow(-1);
+            row.innerHTML = `
+                <td>${student.ID}</td>
+                <td>${student.반}</td>
+                <td>${student.번호}</td>
+                <td>${student.성별}</td>
+                <td>${student.이름}</td>
+                <td>${student['학업성취도(남)'] || ''}</td>
+                <td>${student['학업성취도(여)'] || ''}</td>
+                <td>${student.지도곤란도}</td>
+                <td>${student.Group}</td>
+                <td>
+                    <select onchange="changeGroup(event, '${student.ID}')">
+                        ${Object.keys(groups).map(g => `<option value="${g}" ${g === student.Group ? 'selected' : ''}>${g}</option>`).join('')}
+                    </select>
+                </td>
+            `;
         });
+        groupTables.appendChild(table);
+    });
+}
+
+
+        function changeGroup(event, studentId) {
+            const newGroup = event.target.value;
+            if (confirm("Do you want to change this student's group?")) {
+                students = students.map(student => {
+                    if (student.ID === studentId) {
+                        student.Group = newGroup;
+                    }
+                    return student;
+                });
+                renderGroups();
+            }
+        }
+
+function saveCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,\ufeff" 
+        + Object.keys(students[0]).join(",") 
+        + "\\n" 
+        + students.map(s => Object.values(s).join(",")).join("\\n");
+
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "modified_student_groups.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
     </script>
 </body>
 </html>
