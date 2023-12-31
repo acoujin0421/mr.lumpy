@@ -1,41 +1,4 @@
-
 <!DOCTYPE html>
-<!--
-Created using JS Bin
-http://jsbin.com
-
-Copyright (c) 2023 by anonymous (http://jsbin.com/pebatesexa/1/edit)
-
-Released under the MIT license: http://jsbin.mit-license.org
--->
-<meta name="robots" content="noindex">
-<!--
-Created using JS Bin
-http://jsbin.com
-
-Copyright (c) 2023 by anonymous (http://jsbin.com/pebatesexa/1/edit)
-
-Released under the MIT license: http://jsbin.mit-license.org
--->
-<meta name="robots" content="noindex">
-<!--
-Created using JS Bin
-http://jsbin.com
-
-Copyright (c) 2023 by anonymous (http://jsbin.com/pebatesexa/1/edit)
-
-Released under the MIT license: http://jsbin.mit-license.org
--->
-<meta name="robots" content="noindex">
-<!--
-Created using JS Bin
-http://jsbin.com
-
-Copyright (c) 2023 by anonymous (http://jsbin.com/pebatesexa/1/edit)
-
-Released under the MIT license: http://jsbin.mit-license.org
--->
-<meta name="robots" content="noindex">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -45,46 +8,48 @@ Released under the MIT license: http://jsbin.mit-license.org
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f8f8f8;
+            text-align: center;
         }
-      body {
-    text-align: center;
-}
 
-.centered-content {
-    margin: auto;
-    width: 80%;
-}
-    .text-box {
-    border: 1px solid #000; /* 검은색 테두리 */
-    padding: 20px; /* 내부 여백 */
-    margin: auto; /* 가운데 정렬을 위해 수정 */
-    width: 60%; /* 상자의 너비 */
-    background-color: #f0f0e0; /* 배경 색상 */
-    text-align: left; /* 텍스트 가운데 정렬로 수정 */
-}
+        .centered-content {
+            margin: auto;
+            width: 80%;
+        }
 
+        .text-box {
+            border: 1px solid #000;
+            padding: 20px;
+            margin: auto;
+            width: 60%;
+            background-color: #f0f0e0;
+            text-align: left;
+        }
 
         h2 {
             color: #5d5d5d;
-            text-align: center;
         }
+
         table, th, td {
             border: 1px solid #a1d6e2;
             border-collapse: collapse;
             padding: 10px;
             text-align: center;
         }
+
         th {
             background-color: #b8a9c9;
             color: white;
         }
+
         tr:nth-child(even) {
             background-color: #e6f9ff;
         }
+
         .group-tables {
             margin: 20px auto;
             width: 90%;
         }
+
         button {
             background-color: #f1a7ac;
             color: white;
@@ -95,48 +60,47 @@ Released under the MIT license: http://jsbin.mit-license.org
             margin: 10px;
             font-size: larger;
         }
+
         button:hover {
             background-color: #f48fb1;
         }
-      /* 페이지 하단의 footer 스타일 */
-footer {
-    position: fixed; /* 고정된 위치 */
-    left: 0; /* 왼쪽 가장자리 */
-    bottom: 0; /* 하단 가장자리 */
-    width: 100%; /* 전체 너비 */
-    background-color: #333; /* 배경색 */
-    color: white; /* 글자색 */
-    text-align: center; /* 텍스트 가운데 정렬 */
-    padding: 10px 0; /* 상하 패딩 */
-}
 
-footer p {
-    margin: 0; /* 마진 제거 */
-    padding: 0; /* 패딩 제거 */
-    font-size: 0.8em; /* 글자 크기 */
-}
-      
+        footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        footer p {
+            margin: 0;
+            padding: 0;
+            font-size: 0.8em;
+        }
     </style>
 </head>
 <body>
     <h2>학생 임의 조정</h2>
     <div class="text-box">
-      1. 이전 단계에서 재배치된 학생 명렬을 불러오세요. </br>
-      2. 학생의 학급을 임의조정할 수 있습니다. </br>
-      3. 맨 하단 "수정된 자료 내려받기" 버튼을 클릭하면</br> &nbsp;&nbsp;&nbsp;&nbsp;수정된 명단을 내려받을 수 있습니다.
+        1. 이전 단계에서 재배치된 학생 명렬을 불러오세요.<br>
+        2. 학생의 학급을 임의조정할 수 있습니다.<br>
+        3. 맨 하단 "수정된 자료 내려받기" 버튼을 클릭하면<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;수정된 명단을 내려받을 수 있습니다.
     </div>
-  </br>
+    <br>
     <input type="file" id="csvFileInput" accept=".csv" onchange="loadCSVFile(event)"><br><br>
     <div id="groupTables"></div>
-<button onclick="saveCSV()">수정된 자료 내려받기</button> 
+    <button onclick="saveCSV()">수정된 자료 내려받기</button>
 
-    <div style="margin-bottom: 100px;">
-        
-    </div>
+    <div style="margin-bottom: 100px;"></div>
 
-  <footer>
-    <p>&copy; 2023 덩어리쌤&홍쌤 All Rights Reserved.</p>
-  </footer>
+    <footer>
+        <p>&copy; 2023 덩어리쌤&홍쌤 All Rights Reserved.</p>
+    </footer>
 
     <script>
         let students = [];
@@ -174,43 +138,42 @@ footer p {
             });
         }
 
-function renderGroups() {
-    groups = students.reduce((acc, student) => {
-        acc[student.Group] = acc[student.Group] || [];
-        acc[student.Group].push(student);
-        return acc;
-    }, {});
+        function renderGroups() {
+            groups = students.reduce((acc, student) => {
+                acc[student.Group] = acc[student.Group] || [];
+                acc[student.Group].push(student);
+                return acc;
+            }, {});
 
-    const groupTables = document.getElementById('groupTables');
-    groupTables.innerHTML = '';
+            const groupTables = document.getElementById('groupTables');
+            groupTables.innerHTML = '';
 
-    Object.keys(groups).forEach(group => {
-        const table = document.createElement('table');
-        table.classList.add('group-tables');
-        table.innerHTML = '<tr><th>ID</th><th>반</th><th>번호</th><th>성별</th><th>이름</th><th>학업성취도(남)</th><th>학업성취도(여)</th><th>지도곤란도</th><th>Group</th><th>Change Group</th></tr>';
-        groups[group].forEach(student => {
-            const row = table.insertRow(-1);
-            row.innerHTML = `
-                <td>${student.ID}</td>
-                <td>${student.반}</td>
-                <td>${student.번호}</td>
-                <td>${student.성별}</td>
-                <td>${student.이름}</td>
-                <td>${student['학업성취도(남)'] || ''}</td>
-                <td>${student['학업성취도(여)'] || ''}</td>
-                <td>${student.지도곤란도}</td>
-                <td>${student.Group}</td>
-                <td>
-                    <select onchange="changeGroup(event, '${student.ID}')">
-                        ${Object.keys(groups).map(g => `<option value="${g}" ${g === student.Group ? 'selected' : ''}>${g}</option>`).join('')}
-                    </select>
-                </td>
-            `;
-        });
-        groupTables.appendChild(table);
-    });
-}
-
+            Object.keys(groups).forEach(group => {
+                const table = document.createElement('table');
+                table.classList.add('group-tables');
+                table.innerHTML = '<tr><th>ID</th><th>반</th><th>번호</th><th>성별</th><th>이름</th><th>학업성취도(남)</th><th>학업성취도(여)</th><th>지도곤란도</th><th>Group</th><th>Change Group</th></tr>';
+                groups[group].forEach(student => {
+                    const row = table.insertRow(-1);
+                    row.innerHTML = `
+                        <td>${student.ID}</td>
+                        <td>${student.반}</td>
+                        <td>${student.번호}</td>
+                        <td>${student.성별}</td>
+                        <td>${student.이름}</td>
+                        <td>${student['학업성취도(남)'] || ''}</td>
+                        <td>${student['학업성취도(여)'] || ''}</td>
+                        <td>${student.지도곤란도}</td>
+                        <td>${student.Group}</td>
+                        <td>
+                            <select onchange="changeGroup(event, '${student.ID}')">
+                                ${Object.keys(groups).map(g => `<option value="${g}" ${g === student.Group ? 'selected' : ''}>${g}</option>`).join('')}
+                            </select>
+                        </td>
+                    `;
+                });
+                groupTables.appendChild(table);
+            });
+        }
 
         function changeGroup(event, studentId) {
             const newGroup = event.target.value;
@@ -225,23 +188,19 @@ function renderGroups() {
             }
         }
 
-function saveCSV() {
-    let BOM = "\ufeff";
-    let csvContent = students.map(s => Object.values(s).join(",")).join("\n");
-    let blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+        function saveCSV() {
+            let BOM = "\ufeff";
+            let headers = Object.keys(students[0]).join(",");
+            let csvContent = students.map(s => Object.values(s).join(",")).join("\n");
+            let blob = new Blob([BOM + headers + "\n" + csvContent], { type: 'text/csv;charset=utf-8;' });
 
-    let link = document.createElement("a");
-    link.setAttribute("href", URL.createObjectURL(blob));
-    link.setAttribute("download", "my_data.csv");
-    document.body.appendChild(link);
+            let link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("download", "my_data.csv");
+            document.body.appendChild(link);
 
-    link.click();
-}
-
-
-
-
-
+            link.click();
+        }
     </script>
 </body>
 </html>
