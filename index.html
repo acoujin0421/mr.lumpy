@@ -94,7 +94,7 @@
     <br>
     <input type="file" id="csvFileInput" accept=".csv" onchange="loadCSVFile(event)"><br><br>
     <div id="groupTables"></div>
-    <button onclick="saveCSV()">수정된 자료 내려받기</button>
+    <button onclick="downloadCSV()">수정된 자료 내려받기</button>
 
     <div style="margin-bottom: 100px;"></div>
 
@@ -177,7 +177,7 @@
 
         function changeGroup(event, studentId) {
             const newGroup = event.target.value;
-            if (confirm("Do you want to change this student's group?")) {
+            if (confirm("해당 학생의 학급을 변경하시겠습니까?")) {
                 students = students.map(student => {
                     if (student.ID === studentId) {
                         student.Group = newGroup;
@@ -188,19 +188,35 @@
             }
         }
 
-        function saveCSV() {
-            let BOM = "\ufeff";
-            let headers = Object.keys(students[0]).join(",");
-            let csvContent = students.map(s => Object.values(s).join(",")).join("\n");
-            let blob = new Blob([BOM + headers + "\n" + csvContent], { type: 'text/csv;charset=utf-8;' });
+      
+        function convertToCSV() {
+          const csvRows = [];
+          const headers = Object.keys(students[0]);
+          csvRows.push(headers.join(','));
 
-            let link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", "my_data.csv");
-            document.body.appendChild(link);
+          for (const student of students) {
+            const values = headers.map(header => {
+              const escaped = ('' + student[header]).replace(/"/g, '\\"');
+              return `"${escaped}"`;
+            });
+            csvRows.push(values.join(','));
+          }
 
-            link.click();
+          return csvRows.join('\n');
         }
+
+      
+      
+        function downloadCSV() {
+            const csvData = convertToCSV();
+            const blob = new Blob(["\uFEFF" + csvData], { type: 'text/csv;charset=utf-8;' }); // BOM 추가
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '임의조정된 ReClass';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
     </script>
 </body>
 </html>
